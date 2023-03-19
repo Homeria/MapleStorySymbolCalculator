@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symbol Calculator</title>
+
+    
+
+</head>
+<body>
+
+    <script>
+
+        const reqGrowthValues = [12, 15, 20, 27, 36, 47, 60, 75, 92, 111, 132, 155, 180, 207, 236, 267, 300, 335, 372];
+        const cumulativeGrowthValue = [0, 12, 27, 47, 74, 110, 157, 217, 292, 384, 495, 627, 782, 962, 1169, 1405, 1672, 1972, 2307, 2679];
+        const levelUpThreshold = [12, 27, 47, 74, 110, 157, 217, 292, 384, 495, 627, 782, 962, 1169, 1405, 1672, 1972, 2307, 2679];
+
+        class Symbol {
+            constructor(type, level, in_holds) {
+                this.type = type;
+                this.level = level;
+                this.in_holds = in_holds;
+            }
+
+            getTotalInHolds() {
+                return (cumulativeGrowthValue[this.level - 1] + this.in_holds);
+            }
+
+            getTotalReqSymbol() {
+                return (2679 - this.getTotalInHolds());
+            }
+
+            getTotalReqMeso() {
+                var totalReqMeso = 0;
+                for(var i = this.level; i < 20; i++) {
+                    totalReqMeso += this.getReqMeso(i);
+                }
+                return totalReqMeso;
+            }
+
+            getReqMeso(level) {
+                if(this.type === "vj") {
+                    return (3110000 + (level * 3960000));
+                } else if (this.type === "cc") {
+                    return (6220000 + (level * 4620000));
+                } else if (this.type === "la") {
+                    return (9330000 + (level * 5280000));
+                } else if (this.type === "ar") {
+                    return (11196000 + (level * 5940000));
+                } else if (this.type === "mo") {
+                    return (11196000 + (level * 5940000));
+                } else if (this.type === "es") {
+                    return (11196000 + (level * 5940000));
+                } else {
+                    return -1;
+                }
+            }
+
+            getReqPeriod() {
+                var reqSymbol = this.getTotalReqSymbol();
+                if(this.type === "vj") {
+                    return (reqSymbol / 171);
+                } else if (this.type === "cc") {
+                    return (reqSymbol / 157);
+                } else if (this.type === "la") {
+                    return (reqSymbol / 122);
+                } else if (this.type === "ar") {
+                    return (reqSymbol / 108);
+                } else if (this.type === "mo") {
+                    return (reqSymbol / 101);
+                } else if (this.type === "es") {
+                    return (reqSymbol / 101);
+                } else {
+                    return -1;
+                }
+            }
+    }
+       
+
+        function doCalculate() {
+
+            var getType = document.getElementById("type");
+            var type = getType.options[getType.selectedIndex].value;
+
+            var getLevel = document.getElementById("level");
+            var level = Number(getLevel.options[getLevel.selectedIndex].value);
+
+            var getNum = document.getElementById("num");
+            var in_hold = Number(getNum.value);
+
+            var reqSymbolID = document.getElementById("reqSymbol");
+            var reqMesoID = document.getElementById("reqMeso");
+            var reqPeriodID = document.getElementById("reqPeriod");
+
+            console.log("type = " + type + ", level = " + level + ", inHOld = " + in_hold);
+
+            reqSymbolID.innerHTML = "-";
+            reqMesoID.innerHTML = "-";
+            reqPeriodID.innerHTML = "-";
+
+            if((type === "0") || (level === 0) || isNaN(in_hold) || (in_hold < 0) || ((in_hold - cumulativeGrowthValue[level - 1] > 2679)) || (level === 20 && in_hold !== 0)) {
+                alert("값이 제대로 입력되지 않았습니다. (Value not selected correctly.)")
+            } else {
+                symbol = new Symbol(type, level, in_hold);
+                console.log("reqSymbol : " + symbol.getTotalReqSymbol());
+                console.log("reqMeso : " + symbol.getTotalReqMeso());
+                console.log("reqPeriod : " + symbol.getReqPeriod());
+                
+                var reqSymbol = symbol.getTotalReqSymbol();
+                var reqMeso = symbol.getTotalReqMeso();
+                var formattedReqMeso = reqMeso.toLocaleString();
+                var reqPeriod = Math.ceil(symbol.getReqPeriod());
+
+                reqSymbolID.innerHTML = reqSymbol + "개";
+                reqMesoID.innerHTML = formattedReqMeso + "메소";
+                reqPeriodID.innerHTML = reqPeriod + "주" + "(" + (reqPeriod * 7) + "일)";
+            }
+
+           
+
+        }
+
+    </script>
+
+    <h1> 메이플스토리 심볼 계산기 (Maplestory Symbol Calculator)</h1>
+    
+
+    <div id="wrapper">
+        <select name="type" id="type">
+            <option value="0">심볼 종류 (Symbol type)</option>
+            <option value="vj">소멸의 여로 (Vanishing Journey)</option>
+            <option value="cc">츄츄 아일랜드 (Chu Chu Island)</option>
+            <option value="la">레헬른 (Lachelein)</option>
+            <option value="ar">아르카나 (Arcana)</option>
+            <option value="mo">모라스 (Morass)</option>
+            <option value="es">에스페라 (Esfera)</option>
+        </select>
+    </div>
+    
+    <div id="wrapper">
+        <select name="level" id="level">
+            <option value="0">보유 심볼 레벨 (Symbol level of in-holds)</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+        </select>
+    </div>
+   
+    <div id="wrapper">
+        <input type="text" id="num">
+    </div>
+    
+
+    <input type="button" name="calculate" id="calculate" value="계산 (calculate)" onclick="doCalculate()">
+
+    <div>
+        <div>
+            <span>필요한 심볼의 개수 (Number of symbols required) : </span>
+            <span id="reqSymbol">-</span>
+        </div>
+        <div>
+            <span>필요한 메소 (Required Meso) : </span>
+            <span id="reqMeso">-</span>
+        </div>
+        <div>
+            <span>필요한 기간 (Required period of time) : </span>
+            <span id="reqPeriod">-</span>
+            <h6>본 기간은 매주 일일 퀘스트 7번, 콘텐츠 3번(심볼 45개)를 개준으로 계산되었습니다.</h6>
+            <h6>This period was calculated as a standard of 7 daily quests and 3 contents (45 symbols) per week.</h6>
+        </div>
+        <div>
+            
+        </div>
+    </div>
+
+</body>
+</html>
